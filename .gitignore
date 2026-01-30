@@ -1,0 +1,33 @@
+# Data (empty locally; add your datasets here)
+data/*
+!data/.gitkeep
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+*.swp
+*.swo
+
+# Model checkpoints (optional: uncomment to ignore large .pth files)
+# models/*.pth

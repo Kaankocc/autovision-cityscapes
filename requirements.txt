@@ -1,0 +1,10 @@
+# Core
+torch
+torchvision
+ultralytics
+opencv-python
+numpy
+pandas
+matplotlib
+Pillow
+tqdm
