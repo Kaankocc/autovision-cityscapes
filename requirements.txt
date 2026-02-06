@@ -8,3 +8,4 @@ pandas
 matplotlib
 Pillow
 tqdm
+segmentation-models-pytorch
