@@ -7,25 +7,26 @@ import torchvision.transforms as T
 
 class CityscapesKaggleDataset(Dataset):
     def __init__(self, root_dir, split='train', target_size=(512, 512)):
-        # Kaggle datasets are usually in /kaggle/input/cityscapes-image-pairs/
         self.split_dir = os.path.join(root_dir, split)
+        if not os.path.exists(self.split_dir):
+            raise RuntimeError(f"Directory not found: {self.split_dir}")
+            
         self.image_filenames = [f for f in os.listdir(self.split_dir) if f.endswith('.jpg')]
         self.target_size = target_size
         
-        # 1. Image Transform (Bilinear for smooth detail)
+        # 1. Image Transform (Updated for DeepLabV3+ / ResNet50)
         self.img_transform = T.Compose([
-            T.ToPILImage(),
             T.Resize(self.target_size, interpolation=T.InterpolationMode.BILINEAR),
-            T.ToTensor(), # Scales to [0, 1]
+            T.ToTensor(),
+            T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
         
-        # 2. Mask Transform (Nearest to preserve class IDs)
+        # 2. Mask Transform
         self.mask_transform = T.Compose([
-            T.ToPILImage(),
             T.Resize(self.target_size, interpolation=T.InterpolationMode.NEAREST),
         ])
 
-        # Standard Professional Mapping
+        # Optimized Mapping: RGB to Class ID
         self.color_map = {
             (128, 64, 128): 1, (244, 35, 232): 1, (250, 170, 160): 1, # Road
             (220, 20, 60): 2, (255, 0, 0): 2,                         # Human
@@ -36,15 +37,18 @@ class CityscapesKaggleDataset(Dataset):
         }
 
     def _encode_mask(self, mask_np):
+        """
+        Vectorized mask encoding to significantly speed up data loading.
+        """
         h, w, _ = mask_np.shape
-        mask_id = np.zeros((h, w), dtype=np.int64)
-        min_dist = np.full((h, w), np.inf)
+        mask_id = np.zeros((h, w), dtype=np.int64) # Default to 0 (Background/Void)
 
         for color, class_id in self.color_map.items():
-            dist = np.sum(np.abs(mask_np - np.array(color)), axis=-1)
-            match = (dist < 50) & (dist < min_dist)
+            # Create a boolean mask for pixels matching this specific color
+            # Using a small tolerance (10) is faster than calculating distances for every pixel
+            match = np.all(np.abs(mask_np - np.array(color)) < 20, axis=-1)
             mask_id[match] = class_id
-            min_dist[match] = dist[match]
+            
         return mask_id
 
     def __getitem__(self, idx):
@@ -52,15 +56,15 @@ class CityscapesKaggleDataset(Dataset):
         combined_img = Image.open(img_path).convert("RGB")
         w, h = combined_img.size
         
-        # Split original 256x512 into two squares before upscaling
+        # Split the 256x512 image into Image and Mask
         image = combined_img.crop((0, 0, w//2, h))
         mask_raw = combined_img.crop((w//2, 0, w, h))
         
-        # Apply transforms to upscale to target_size (e.g., 512x512)
-        image_tensor = self.img_transform(np.array(image))
-        mask_rescaled = self.mask_transform(np.array(mask_raw))
+        # Apply transforms
+        image_tensor = self.img_transform(image)
+        mask_rescaled = self.mask_transform(mask_raw)
         
-        # Encode the rescaled mask into 7 classes
+        # Encode and convert to LongTensor for CrossEntropyLoss
         mask_id = self._encode_mask(np.array(mask_rescaled))
         mask_tensor = torch.from_numpy(mask_id).long()
 

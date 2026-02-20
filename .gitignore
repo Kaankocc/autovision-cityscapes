@@ -30,4 +30,4 @@ build/
 *.swo
 
 # Model checkpoints (optional: uncomment to ignore large .pth files)
-models/*.pth
+models/*
