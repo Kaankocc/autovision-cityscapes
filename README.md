@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](#)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](#)
-[![Status](https://img.shields.io/badge/Status-In--Progress-orange.svg)](#)
+[![Status](https://img.shields.io/badge/Status-Complete-brightgreen.svg)](#)
 
 ---
 
