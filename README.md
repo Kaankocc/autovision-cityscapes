@@ -9,6 +9,8 @@
 
 ---
 
+![image](./readme_images/cityscape.png)
+
 ## 📌 Project Overview
 
 AutoVision is an ongoing research project focused on mastering **Semantic Segmentation** for self-driving vehicles. This repository documents the architectural evolution of a segmentation model, optimizing for real-world European driving sequences (e.g., Stuttgart).
@@ -91,10 +93,11 @@ _(Confidence mapping and boundary detection on complex road networks)_
 
 Due to file size limits, model weights are hosted externally on Kaggle.
 
-| Version     | Architecture | Description                                     | Access                                                                                 |
-| :---------- | :----------- | :---------------------------------------------- | :------------------------------------------------------------------------------------- |
-| **Phase 1** | Custom UNet  | Baseline tuned on Cityscapes                    | [Download .pth File](https://www.kaggle.com/models/kaankoc0/cityscapes-fine-tuned-pth) |
-| **Phase 2** | DeepLabV3+   | ResNet50 backbone, optimized for dynamic agents | [Download .pth File](https://www.kaggle.com/models/kaankoc0/deeplabv3-resnet50-best-pth) |                                                               |
+| Version     | Architecture | Description                                     | Access                                                                                   |
+| :---------- | :----------- | :---------------------------------------------- | :--------------------------------------------------------------------------------------- | --- |
+| **Phase 1** | Custom UNet  | Baseline tuned on Cityscapes                    | [Download .pth File](https://www.kaggle.com/models/kaankoc0/cityscapes-fine-tuned-pth)   |
+| **Phase 2** | DeepLabV3+   | ResNet50 backbone, optimized for dynamic agents | [Download .pth File](https://www.kaggle.com/models/kaankoc0/deeplabv3-resnet50-best-pth) |     |
+
 ---
 
 ## 📂 Project Structure
